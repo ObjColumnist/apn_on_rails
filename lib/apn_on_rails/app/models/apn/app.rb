@@ -76,7 +76,7 @@ class APN::App < APN::Base
       APN::Connection.open_for_delivery({:cert => self.cert}) do |conn, sock|
         unsent_group_notifications.each do |gnoty|
           gnoty.devices.find_each do |device|
-            conn.write(gnoty.message_for_sending(device))open_for_delivery
+            conn.write(gnoty.message_for_sending(device))
           end
           gnoty.sent_at = Time.now
           gnoty.save
