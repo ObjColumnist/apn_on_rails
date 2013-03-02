@@ -13,18 +13,13 @@ module APN # :nodoc:
         rails_root = ::Rails.root.to_s
       end
 
-      rails_env = 'development'
-      if defined?(::Rails.env)
-        rails_env = ::Rails.env
-      end
-
       configatron.apn.set_default(:passphrase, '')
       configatron.apn.set_default(:port, 2195)
 
       configatron.apn.feedback.set_default(:passphrase, configatron.apn.passphrase)
       configatron.apn.feedback.set_default(:port, 2196)
 
-      if rails_env == 'production'
+      if Rails.env.production? == true
         configatron.apn.set_default(:host, 'gateway.push.apple.com')
         configatron.apn.set_default(:cert, File.join(rails_root, 'config', 'apple_push_notification_production.pem'))
 

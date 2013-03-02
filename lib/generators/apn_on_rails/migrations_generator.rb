@@ -14,9 +14,6 @@ module ApnOnRails
       source_root File.expand_path('../templates/migrations', __FILE__)
   
       def create_migrations
-        # Dir.glob(File.join(self.class.base_root, 'templates', 'migrations', '*.rb')).sort.each do |file|          
-        #   migration_template("#{File.basename(file)}", "db/migrate/#{File.basename(file)}");
-        # end
 
         templates = {
           'create_apn_devices.rb' => 'db/migrate/create_apn_devices.rb',

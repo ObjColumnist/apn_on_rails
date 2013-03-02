@@ -21,6 +21,7 @@ class APN::GroupNotification < APN::Base
     if !message.blank? && message.size > 150
       message = truncate(message, :length => 150)
     end
+    
     write_attribute('alert', message)
   end
   
@@ -44,15 +45,18 @@ class APN::GroupNotification < APN::Base
     result['aps'] = {}
     result['aps']['alert'] = self.alert if self.alert
     result['aps']['badge'] = self.badge.to_i if self.badge
+    
     if self.sound
       result['aps']['sound'] = self.sound if self.sound.is_a? String
       result['aps']['sound'] = "1.aiff" if self.sound.is_a?(TrueClass)
     end
+    
     if self.custom_properties
       self.custom_properties.each do |key,value|
         result["#{key}"] = "#{value}"
       end
     end
+    
     result
   end
   

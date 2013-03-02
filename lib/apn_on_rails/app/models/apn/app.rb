@@ -8,7 +8,7 @@ class APN::App < APN::Base
   has_many :unsent_group_notifications, :through => :groups
     
   def cert
-    (Rails.env == 'production' ? apn_prod_cert : apn_dev_cert)
+    Rails.env.production? == true ? apn_prod_cert : apn_dev_cert
   end
   
   # Opens a connection to the Apple APN server and attempts to batch deliver
@@ -27,11 +27,13 @@ class APN::App < APN::Base
   end
   
   def self.send_notifications
-    apps = APN::App.all 
+    apps = APN::App.all
+     
     apps.each do |app|
       app.send_notifications
     end
-    if !configatron.apn.cert.blank?
+    
+    if configatron.apn.cert.blank? == false && File.exists?(configatron.apn.cert)
       global_cert = File.read(configatron.apn.cert)
       send_notifications_for_cert(global_cert, nil)
     end
@@ -40,9 +42,9 @@ class APN::App < APN::Base
   def self.send_notifications_for_cert(the_cert, app_id)
     begin
       APN::Connection.open_for_delivery({:cert => the_cert}) do |conn, sock|
-        unset = APN::Notification.joins(:device).
-            where(:sent_at => nil, :apn_devices => { :app_id => app_id }).
-            order(:device_id, :created_at).readonly(false)
+        
+        unset = APN::Notification.joins(:device).where(:sent_at => nil, :apn_devices => { :app_id => app_id }).order(:device_id, :created_at).readonly(false)
+        
         unset.each do |noty|
           Rails.logger.debug "Sending notification ##{noty.id}"
           begin
@@ -54,9 +56,11 @@ class APN::App < APN::Base
               retry
             end
           end
+          
           noty.sent_at = Time.now
           noty.save
         end
+        
       end
     rescue Exception => e
       log_connection_exception(e)
@@ -72,7 +76,7 @@ class APN::App < APN::Base
       APN::Connection.open_for_delivery({:cert => self.cert}) do |conn, sock|
         unsent_group_notifications.each do |gnoty|
           gnoty.devices.find_each do |device|
-            conn.write(gnoty.message_for_sending(device))
+            conn.write(gnoty.message_for_sending(device))open_for_delivery
           end
           gnoty.sent_at = Time.now
           gnoty.save
@@ -104,7 +108,7 @@ class APN::App < APN::Base
     end
   end          
   
-  # Retrieves a list of APN::Device instnces from Apple using
+  # Retrieves a list of APN::Device instances from Apple using
   # the <tt>devices</tt> method. It then checks to see if the
   # <tt>last_registered_at</tt> date of each APN::Device is
   # before the date that Apple says the device is no longer
@@ -124,9 +128,11 @@ class APN::App < APN::Base
   
   def self.process_devices
     apps = APN::App.all
+    
     apps.each do |app|
       app.process_devices
     end
+    
     if !configatron.apn.cert.blank?
       global_cert = File.read(configatron.apn.cert)
       APN::App.process_devices_for_cert(global_cert)
@@ -150,6 +156,7 @@ class APN::App < APN::Base
   end
   
   protected
+  
   def log_connection_exception(ex)
     Rails.logger.error "apn_on_rails - Connection error: " + ex.message
   end
