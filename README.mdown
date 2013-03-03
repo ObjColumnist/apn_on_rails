@@ -72,7 +72,7 @@ You will need to add the following to your Rakefile so you can use the Rake task
 
 Now, to create the tables you need for APN on Rails, run the following task:
 
-	$ ruby script/generate apn_migrations
+	$ rails generate apn_migrations
 
 APN on Rails uses the Configatron gem, http://github.com/markbates/configatron/tree/master, 
 to configure itself. (With the change to multi-app support, the certifications are stored in the 
