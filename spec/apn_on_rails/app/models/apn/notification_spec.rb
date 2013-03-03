@@ -2,12 +2,12 @@ require File.join(File.dirname(__FILE__), '..', '..', '..', '..', 'spec_helper.r
 
 describe APN::Notification do
   
-  describe 'alert' do
+  describe 'body' do
     
     it 'should trim the message to 150 characters' do
       noty = APN::Notification.new
-      noty.alert = 'a' * 200
-      noty.alert.should == ('a' * 147) + '...'
+      noty.body = 'a' * 200
+      noty.body.should == ('a' * 147) + '...'
     end
     
   end
@@ -16,12 +16,12 @@ describe APN::Notification do
     
     it 'should return a hash of the appropriate params for Apple' do
       noty = APN::Notification.first
-      noty.apple_hash.should == {"aps" => {"badge" => 5, "sound" => "my_sound.aiff", "alert" => "Hello!"},"typ" => "1"}
+      noty.apple_hash.should == {"aps" => {"badge" => 5, "sound" => "my_sound.aiff", "alert" => {"body" => 'Hello!'}},"typ" => "1"}
       noty.custom_properties = nil
-      noty.apple_hash.should == {"aps" => {"badge" => 5, "sound" => "my_sound.aiff", "alert" => "Hello!"}}
+      noty.apple_hash.should == {"aps" => {"badge" => 5, "sound" => "my_sound.aiff", "alert" => {"body" => 'Hello!'}}}
       noty.badge = nil
-      noty.apple_hash.should == {"aps" => {"sound" => "my_sound.aiff", "alert" => "Hello!"}}
-      noty.alert = nil
+      noty.apple_hash.should == {"aps" => {"sound" => "my_sound.aiff", "alert" => {"body" => 'Hello!'}}}
+      noty.body = nil
       noty.apple_hash.should == {"aps" => {"sound" => "my_sound.aiff"}}
       noty.sound = nil
       noty.apple_hash.should == {"aps" => {}}
@@ -35,7 +35,7 @@ describe APN::Notification do
     
     it 'should return the necessary JSON for Apple' do
       noty = APN::Notification.first
-      noty.to_apple_json.should == %{{"typ":"1","aps":{"badge":5,"sound":"my_sound.aiff","alert":"Hello!"}}}
+      noty.to_apple_json.should == %{{"typ":"1","aps":{"badge":5,"sound":"my_sound.aiff","alert":{"body":"Hello!"}}}}
     end
     
   end
@@ -51,7 +51,7 @@ describe APN::Notification do
     
     it 'should raise an APN::Errors::ExceededMessageSizeError if the message is too big' do
       noty = NotificationFactory.new(:device_id => DeviceFactory.create, :sound => true, :badge => nil)
-      noty.send(:write_attribute, 'alert', 'a' * 183)
+      noty.send(:write_attribute, 'body', 'a' * 183)
       lambda {
         noty.message_for_sending
       }.should raise_error(APN::Errors::ExceededMessageSizeError)

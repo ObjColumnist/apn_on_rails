@@ -6,7 +6,7 @@ class CreateApnGroupNotifications < ActiveRecord::Migration # :nodoc:
       t.integer :group_id, :null => false
       t.string :device_language, :size => 5 # if you don't want to send localized strings
       t.string :sound
-      t.string :alert, :size => 150
+      t.string :body, :size => 150
       t.integer :badge
       t.text :custom_properties
       t.datetime :sent_at

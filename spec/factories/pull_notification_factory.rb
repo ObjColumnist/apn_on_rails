@@ -4,8 +4,13 @@ module PullNotificationFactory
     
     def new(options = {})
       app = APN::App.first
-      options = {:app_id => app.id, :title => 'Pull Notification Title', 
-                 :content => 'blah blah blah', :link => 'http://www.prx.org', :launch_notification => false}.merge(options)
+      
+      options = {:app_id => app.id, 
+                 :title => 'Pull Notification Title', 
+                 :content => 'blah blah blah', 
+                 :link => 'http://www.example.com', 
+                 :launch_notification => false}.merge(options)
+                 
       return APN::PullNotification.new(options)
     end
     

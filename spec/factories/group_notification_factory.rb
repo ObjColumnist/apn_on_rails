@@ -4,8 +4,13 @@ module GroupNotificationFactory
     
     def new(options = {})
       group = APN::Group.first
-      options = {:group_id => group.id, :sound => 'my_sound.aiff',
-                 :badge => 5, :alert => 'Hello!', :custom_properties => {'typ' => 1}}.merge(options)
+      
+      options = {:group_id => group.id, 
+                 :sound => 'my_sound.aiff',
+                 :badge => 5, 
+                 :alert => {:body => 'Hello!'}, 
+                 :custom_properties => {'typ' => 1}}.merge(options)
+                 
       return APN::GroupNotification.new(options)
     end
     

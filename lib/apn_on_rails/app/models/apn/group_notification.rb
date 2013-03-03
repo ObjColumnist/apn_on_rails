@@ -13,16 +13,16 @@ class APN::GroupNotification < APN::Base
     self.group.devices
   end
   
-  # Stores the text alert message you want to send to the device.
+  # Stores the text body message you want to send to the device.
   # 
   # If the message is over 150 characters long it will get truncated
   # to 150 characters with a <tt>...</tt>
-  def alert=(message)
+  def body=(message)
     if !message.blank? && message.size > 150
       message = truncate(message, :length => 150)
     end
     
-    write_attribute('alert', message)
+    write_attribute('body', message)
   end
   
   # Creates a Hash that will be the payload of an APN.
@@ -31,8 +31,8 @@ class APN::GroupNotification < APN::Base
   #   apn = APN::GroupNotification.new
   #   apn.badge = 5
   #   apn.sound = 'my_sound.aiff'
-  #   apn.alert = 'Hello!'
-  #   apn.apple_hash # => {"aps" => {"badge" => 5, "sound" => "my_sound.aiff", "alert" => "Hello!"}}
+  #   apn.body = 'Hello!'
+  #   apn.apple_hash # => {"aps" => {"badge" => 5, "sound" => "my_sound.aiff", "alert":{"body":"Hello!"}}}
   #
   # Example 2: 
   #   apn = APN::GroupNotification.new
@@ -43,13 +43,11 @@ class APN::GroupNotification < APN::Base
   def apple_hash
     result = {}
     result['aps'] = {}
-    result['aps']['alert'] = self.alert if self.alert
+    result['aps']['alert'] = {}
+    result['aps']['alert']['body'] = self.body if self.body
+    result['aps']['alert']['action-loc-key'] = self.action_key if self.action_key
     result['aps']['badge'] = self.badge.to_i if self.badge
-    
-    if self.sound
-      result['aps']['sound'] = self.sound if self.sound.is_a? String
-      result['aps']['sound'] = "1.aiff" if self.sound.is_a?(TrueClass)
-    end
+    result['aps']['sound'] = self.sound if self.sound
     
     if self.custom_properties
       self.custom_properties.each do |key,value|
@@ -66,8 +64,8 @@ class APN::GroupNotification < APN::Base
   #   apn = APN::Notification.new
   #   apn.badge = 5
   #   apn.sound = 'my_sound.aiff'
-  #   apn.alert = 'Hello!'
-  #   apn.to_apple_json # => '{"aps":{"badge":5,"sound":"my_sound.aiff","alert":"Hello!"}}'
+  #   apn.body = 'Hello!'
+  #   apn.to_apple_json # => '{"aps":{"badge":5,"sound":"my_sound.aiff","alert":{"body":"Hello!"}}}'
   def to_apple_json
     self.apple_hash.to_json
   end

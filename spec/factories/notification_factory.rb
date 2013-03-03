@@ -4,8 +4,13 @@ module NotificationFactory
     
     def new(options = {})
       device = APN::Device.first
-      options = {:device_id => device.id, :sound => 'my_sound.aiff',
-                 :badge => 5, :alert => 'Hello!', :custom_properties => {'typ' => 1}}.merge(options)
+      
+      options = {:device_id => device.id, 
+                 :sound => 'my_sound.aiff',
+                 :badge => 5, 
+                 :alert => {:body => 'Hello!'}, 
+                 :custom_properties => {'typ' => 1}}.merge(options)
+                 
       return APN::Notification.new(options)
     end
     

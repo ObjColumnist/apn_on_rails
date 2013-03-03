@@ -119,7 +119,7 @@ That way you ensure you have the latest version of the database tables needed.
 	>> notification.device = device
 	>> notification.badge = 5
 	>> notification.sound = true
-	>> notification.alert = "foobar"
+	>> notification.body = "foobar"
 	>> notification.custom_properties = {:link => "http://www.example.com"}
 	>> notification.save
   

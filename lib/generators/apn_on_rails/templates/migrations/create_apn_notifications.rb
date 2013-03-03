@@ -7,7 +7,7 @@ class CreateApnNotifications < ActiveRecord::Migration # :nodoc:
       t.integer :errors_nb, :default => 0 # used for storing errors from apple feedbacks
       t.string :device_language, :size => 5 # if you don't want to send localized strings
       t.string :sound
-      t.string :alert, :size => 150
+      t.string :body, :size => 150
       t.integer :badge
       t.datetime :sent_at
       t.timestamps
