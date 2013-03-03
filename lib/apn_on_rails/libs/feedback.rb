@@ -14,10 +14,13 @@ module APN
         devices = []
         return if cert.nil? 
         APN::Connection.open_for_feedback({:cert => cert}) do |conn, sock|          
+          
           while line = conn.read(38)   # Read 38 bytes from the SSL socket
+            
             feedback = line.unpack('N1n1H140')            
             token = feedback[2].scan(/.{0,8}/).join(' ').strip
             device = APN::Device.find(:first, :conditions => {:token => token})
+            
             if device
               device.feedback_at = Time.at(feedback[0])
               devices << device
@@ -27,11 +30,6 @@ module APN
         devices.each(&block) if block_given?
         return devices
       end # devices
-      
-      def process_devices
-        ActiveSupport::Deprecation.warn("The method APN::Feedback.process_devices is deprecated.  Use APN::App.process_devices instead.")
-        APN::App.process_devices
-      end
       
     end # class << self
     

@@ -88,9 +88,4 @@ class APN::Notification < APN::Base
     message
   end
   
-  def self.send_notifications
-    ActiveSupport::Deprecation.warn("The method APN::Notification.send_notifications is deprecated.  Use APN::App.send_notifications instead.")
-    APN::App.send_notifications
-  end
-  
 end # APN::Notification

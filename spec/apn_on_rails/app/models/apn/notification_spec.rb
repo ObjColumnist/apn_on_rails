@@ -59,13 +59,4 @@ describe APN::Notification do
     
   end
   
-  describe 'send_notifications' do 
-    
-    it 'should warn the user the method is deprecated and call the corresponding method on APN::App' do
-      ActiveSupport::Deprecation.should_receive(:warn)
-      APN::App.should_receive(:send_notifications)
-      APN::Notification.send_notifications
-    end
-  end
-  
 end
