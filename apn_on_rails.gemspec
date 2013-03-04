@@ -16,8 +16,7 @@ easily add Apple Push Notification (iPhone) support to your Rails application.
   s.email = %q{tech-team@prx.org}
   s.extra_rdoc_files = [
     "LICENSE",
-    "README",
-    "README.textile"
+    "README.mdown"
   ]
   s.files = [
     ".rspec",
