@@ -16,19 +16,7 @@ module ApnOnRails
       def create_migrations
 
         templates = {
-          'create_apn_devices.rb' => 'db/migrate/create_apn_devices.rb',
-          'create_apn_notifications.rb' => 'db/migrate/create_apn_notifications.rb',
-          'create_apn_apps.rb' => 'db/migrate/create_apn_apps.rb',
-          'alter_apn_devices.rb' => 'db/migrate/alter_apn_devices.rb',
-          'create_groups.rb' => 'db/migrate/create_groups.rb',
-          'alter_apn_groups.rb' => 'db/migrate/alter_apn_groups.rb',
-          'create_device_groups.rb' => 'db/migrate/create_device_groups.rb',
-          'create_apn_group_notifications.rb' => 'db/migrate/create_apn_group_notifications.rb',
-          'create_pull_notifications.rb' => 'db/migrate/create_pull_notifications.rb',
-          'alter_apn_notifications.rb' => 'db/migrate/alter_apn_notifications.rb',
-          'make_device_token_index_nonunique.rb' => 'db/migrate/make_device_token_index_nonunique.rb',
-          'add_launch_notification_to_apn_pull_notifications.rb' => 'db/migrate/add_launch_notification_to_apn_pull_notifications.rb',
-          'add_action_key_to_apn_notifications.rb' => 'db/migrate/add_action_key_to_apn_notifications.rb',
+          'create_apns_on_rails.rb' => 'db/migrate/create_apns_on_rails.rb',
         }
 
         templates.each_pair do |name, path|
