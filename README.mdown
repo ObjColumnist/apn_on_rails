@@ -28,12 +28,6 @@ with an APN::App)
 
 Notification Content Areas: Notifications may contain alerts, badges, sounds, and custom properties.
 
-Pull Notifications: This version of the gem supports an alternative notification method that relies
-on pulls from client devices and does not interact with the Apple Push Notification servers.  This feature
-may be used entirely independently of the push notification features.  Pull notifications may be
-created for an app.  A client app can query for the most recent pull notification available since a 
-given date to retrieve any notifications waiting for it. 
-
 # Version 0.4.1 Notes
 
 * Backwards compatibility.  0.4.0 required a manual upgrade to associate existing and new devices with an APN::App model.  This version allows continued use of devices that are associated with a default "app" that stores its certificates in the config directory.  This ought to allow upgrade to this version without code changes.  
@@ -136,10 +130,6 @@ To prevent errors when copy and pasting your dev certs you can do it with Ruby
 You can use the following Rake task to deliver your individual notifications:
 
 	$ rake apn:notifications:deliver
-
-And the following task to deliver your group notifications: 
-
-	$ rake apn:group_notifications:deliver
 
 The Rake task will find any unsent notifications in the database. If there aren't any notifications
 it will simply do nothing. If there are notifications waiting to be delivered it will open a single connection

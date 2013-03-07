@@ -8,15 +8,6 @@ namespace :apn do
     end
 
   end # notifications
-
-  namespace :group_notifications do 
-    
-    desc "Deliver all unsent APN Group notifications."
-    task :deliver => [:environment] do
-      APN::App.send_group_notifications
-    end
-    
-  end # group_notifications
   
   namespace :feedback do
     
