@@ -4,6 +4,20 @@ require 'rails'
 
 module APN # :nodoc:
 
+  def configuration
+    if @configuration.nil?
+      @configuration = {}
+            
+      if Rails.env.production?
+        @configuration[:environment] = :production
+      else
+        @configuration[:environment] = :development
+      end
+    end
+    
+    @configuration
+  end
+  
   module Errors # :nodoc:
 
     # Raised when a notification message to Apple is longer than 256 bytes.

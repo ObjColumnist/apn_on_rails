@@ -9,7 +9,7 @@ module APN
           @configuration[:passphrase] = ''
           @configuration[:port] = 2195
                 
-          if Rails.env == :production
+          if APN.configuration[:environment] == :production
             @configuration[:host] = 'gateway.push.apple.com'
           else
             @configuration[:host] = 'gateway.sandbox.push.apple.com'
