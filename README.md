@@ -96,8 +96,8 @@ That's it, now you're ready to start creating notifications.
 
 If you are upgrading to a new version of APN on Rails you should always run:
 
-	$ ruby script/generate apn_migrations
-
+	$ rails generate apn_on_rails:migrations
+	
 That way you ensure you have the latest version of the database tables needed.
 
 ##Example:
