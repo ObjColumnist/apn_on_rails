@@ -62,10 +62,9 @@ class APN::Notification < APN::Base
     result['aps']['sound'] = self.sound if self.sound
 
     if self.custom_payloads
-      self.custom_payloads.each do |key,value|
-        result["#{key}"] = value
-      end
+      result.merge!(self.custom_payloads)
     end
+    
     result
   end
   
