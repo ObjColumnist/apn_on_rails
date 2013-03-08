@@ -22,11 +22,14 @@ class CreateApnsOnRails < ActiveRecord::Migration
       t.string   "sound"
       t.string   "body"
       t.integer  "badge"
+      t.string   "launch_image"
+      t.string   "action_localized_key"
+      t.string   "localized_key"
+      t.text     "localized_key_arguments"
+      t.text     "custom_payloads"
       t.datetime "sent_at"
       t.datetime "created_at",        :null => false
       t.datetime "updated_at",        :null => false
-      t.text     "custom_properties"
-      t.string   "action_key"
     end
 
     add_index "apn_notifications", ["device_id"], :name => "index_apn_notifications_on_device_id"

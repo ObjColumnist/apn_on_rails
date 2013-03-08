@@ -14,7 +14,7 @@ require 'apn_on_rails/feedback.rb'
 
 module APN # :nodoc:
 
-  def configuration
+  def self.configuration
     if @configuration.nil?
       @configuration = {}
             

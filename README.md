@@ -32,7 +32,7 @@ Notification Content Areas: Notifications may contain alerts, badges, sounds, an
 
 * Backwards compatibility.  0.4.0 required a manual upgrade to associate existing and new devices with an APN::App model.  This version allows continued use of devices that are associated with a default "app" that stores its certificates in the config directory.  This ought to allow upgrade to this version without code changes.  
 * Batched finds.  Finds on the APN::Device model that can return large numbers of records have been batched to limit memory impact. 
-* Custom properties migration.  At a pre-0.4.0 version the custom_properties attribute was added to the migration template that created the notifications table.  This introduced a potential problem for gem users who had previously run this migration.  The custom_properties alteration to the apn_notifications table has been moved to its own migration and should work regardless of whether your apn_notifications table already has a custom_properties attribute. 
+* Custom properties migration.  At a pre-0.4.0 version the custom_payloads attribute was added to the migration template that created the notifications table.  This introduced a potential problem for gem users who had previously run this migration.  The custom_payloads alteration to the apn_notifications table has been moved to its own migration and should work regardless of whether your apn_notifications table already has a custom_payloads attribute. 
 * last_registered_at changed to work intuitively.  The last_registered_at attribute of devices was being updated only on creation potentially causing a bug in which a device that opts out of APNs and then opts back in before apn_on_rails received feedback about it might miss a period of APNs that it should receive.  
 
 # Installation and Setup
@@ -110,7 +110,7 @@ That way you ensure you have the latest version of the database tables needed.
 	>> notification.badge = 5
 	>> notification.sound = 'sound.wav'
 	>> notification.body = "foobar"
-	>> notification.custom_properties = {:link => "http://www.example.com"}
+	>> notification.custom_payloads = {:link => "http://www.example.com"}
 	>> notification.save
   
 To prevent errors when copy and pasting your dev certs you can do it with Ruby

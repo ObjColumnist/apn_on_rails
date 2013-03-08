@@ -17,7 +17,8 @@
 class APN::Notification < APN::Base
   include ::ActionView::Helpers::TextHelper
   extend ::ActionView::Helpers::TextHelper
-  serialize :custom_properties
+  serialize :custom_payloads
+  serialize :localized_key_arguments
   
   belongs_to :device, :class_name => 'APN::Device'
   has_one    :app,    :class_name => 'APN::App', :through => :device
@@ -46,20 +47,23 @@ class APN::Notification < APN::Base
   #   apn = APN::Notification.new
   #   apn.badge = 0
   #   apn.sound = true
-  #   apn.custom_properties = {"typ" => 1}
+  #   apn.custom_payloads = {"typ" => 1}
   #   apn.apple_hash # => {"aps" => {"badge" => 0, "sound" => "1.aiff"}, "typ" => "1"}
   def apple_hash
     result = {}
     result['aps'] = {}
     result['aps']['alert'] = {}
     result['aps']['alert']['body'] = self.body if self.body
-    result['aps']['alert']['action-loc-key'] = self.action_key if self.action_key
+    result['aps']['alert']['loc-key'] = self.localized_key if self.localized_key
+    result['aps']['alert']['loc-args'] = self.localized_key_arguments if self.localized_key_arguments
+    result['aps']['alert']['action-loc-key'] = self.action_localized_key if self.action_localized_key
+    result['aps']['alert']['launch-image'] = self.launch_image if self.launch_image
     result['aps']['badge'] = self.badge.to_i if self.badge
     result['aps']['sound'] = self.sound if self.sound
 
-    if self.custom_properties
-      self.custom_properties.each do |key,value|
-        result["#{key}"] = "#{value}"
+    if self.custom_payloads
+      self.custom_payloads.each do |key,value|
+        result["#{key}"] = value
       end
     end
     result
