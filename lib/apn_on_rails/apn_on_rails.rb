@@ -2,6 +2,12 @@ require 'socket'
 require 'openssl'
 require 'rails'
 
+require 'apn_on_rails/app/models/apn/base.rb'
+require 'apn_on_rails/app/models/apn/app.rb'
+require 'apn_on_rails/app/models/apn/device.rb'
+require 'apn_on_rails/app/models/apn/notification.rb'
+
+
 module APN # :nodoc:
 
   def configuration
@@ -38,10 +44,3 @@ module APN # :nodoc:
   end # Errors
 
 end # APN
-
-base = File.join(File.dirname(__FILE__), 'app', 'models', 'apn', 'base.rb')
-require base
-
-Dir.glob(File.join(File.dirname(__FILE__), 'app', 'models', 'apn', '*.rb')).sort.each do |f|
-  require f
-end
