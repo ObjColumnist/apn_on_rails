@@ -60,17 +60,7 @@ Store the contents of the certificate files on the app model for the app you wan
 
 ### Setup and Configuration:
 
-Once you have the gem installed via your favorite gem installation, you need to require it so you can start to use it:
-
-Add the following require, wherever it makes sense to you:
-
- 	require 'apn_on_rails'
-
-You will need to add the following to your Rakefile so you can use the Rake tasks that ship with APN on Rails:
-
-	require 'apn_on_rails_tasks'
-
-Now, to create the tables you need for APN on Rails, run the following task:
+To create the tables you need for APN on Rails, run the following task:
 
 	$ rails generate apn_on_rails:migrations
 
