@@ -2,7 +2,7 @@ module APN
   class Railtie < Rails::Railtie
 
     rake_tasks do
-      load "apn_on_rails_tasks.rb"
+      load "tasks/apn.rake"
     end
     
     generators do

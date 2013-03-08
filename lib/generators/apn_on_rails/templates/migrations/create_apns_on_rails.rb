@@ -1,22 +1,13 @@
 class CreateApnsOnRails < ActiveRecord::Migration
   def self.up
     create_table "apn_apps", :force => true do |t|
-      t.string   "name"
-      t.string   "bundle_identifier"
       t.text     "cert"
       t.datetime "created_at",        :null => false
       t.datetime "updated_at",        :null => false
     end
-    
-    add_index "apn_apps", ["bundle_identifier"], :name => "index_apn_apps_on_bundle_identifier"
-    
+        
     
     create_table "apn_devices", :force => true do |t|
-      t.string   "name"
-      t.string   "system_name"
-      t.string   "system_version"
-      t.string   "model"
-      t.string   "app_version"
       t.string   "token",              :null => false
       t.datetime "created_at",         :null => false
       t.datetime "updated_at",         :null => false
