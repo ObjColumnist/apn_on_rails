@@ -1,6 +1,6 @@
 require 'rails/generators/active_record'
 
-module ApnOnRails
+module ApnsOnRails
   module Generators
     class MigrationsGenerator < Rails::Generators::Base
       include Rails::Generators::Migration

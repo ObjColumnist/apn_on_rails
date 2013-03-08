@@ -1,4 +1,4 @@
-module APN
+module APNS
   class Base < ActiveRecord::Base # :nodoc:
 
     self.abstract_class = true

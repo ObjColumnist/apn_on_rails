@@ -1,18 +1,18 @@
-# Represents an iPhone (or other APN enabled device).
-# An APN::Device can have many APN::Notification.
+# Represents an iPhone (or other APNS enabled device).
+# An APNS::Device can have many APNS::Notification.
 # 
-# In order for the APN::Feedback system to work properly you *MUST*
+# In order for the APNS::Feedback system to work properly you *MUST*
 # touch the <tt>last_registered_at</tt> column everytime someone opens
 # your application. If you do not, then it is possible, and probably likely,
 # that their device will be removed and will no longer receive notifications.
 # 
 # Example:
 #   Device.create(:token => '5gxadhy6 6zmtxfl6 5zpbcxmw ez3w7ksf qscpr55t trknkzap 7yyt45sc g6jrw7qz')
-class APN::Device < APN::Base
+class APNS::Device < APNS::Base
   
-  belongs_to :app, :class_name => 'APN::App'
-  has_many :notifications, :class_name => 'APN::Notification', :dependent => :destroy
-  has_many :unsent_notifications, :class_name => 'APN::Notification', :conditions => 'sent_at is null'
+  belongs_to :app, :class_name => 'APNS::App'
+  has_many :notifications, :class_name => 'APNS::Notification', :dependent => :destroy
+  has_many :unsent_notifications, :class_name => 'APNS::Notification', :conditions => 'sent_at is null'
   
   validates_uniqueness_of :token, :scope => :app_id
   validates_format_of :token, :with => /^[a-f0-9]{8}\s[a-f0-9]{8}\s[a-f0-9]{8}\s[a-f0-9]{8}\s[a-f0-9]{8}\s[a-f0-9]{8}\s[a-f0-9]{8}\s[a-f0-9]{8}$/

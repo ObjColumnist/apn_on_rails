@@ -1,24 +1,24 @@
-class APN::App < APN::Base
+class APNS::App < APNS::Base
   
-  has_many :devices, :class_name => 'APN::Device', :dependent => :destroy
+  has_many :devices, :class_name => 'APNS::Device', :dependent => :destroy
   has_many :notifications, :through => :devices, :dependent => :destroy
   has_many :unsent_notifications, :through => :devices
   
   validates_presence_of :cert
   
-  # Opens a connection to the Apple APN server and attempts to batch deliver
+  # Opens a connection to the Apple APNS server and attempts to batch deliver
   # an Array of group notifications.
 
   def send_notifications
     if self.cert.nil?
-      raise APN::Errors::MissingCertificateError.new
+      raise APNS::Errors::MissingCertificateError.new
       return
     end
-    APN::App.send_notifications_for_cert(self.cert, self.id)
+    APNS::App.send_notifications_for_cert(self.cert, self.id)
   end
   
   def self.send_notifications
-    apps = APN::App.all
+    apps = APNS::App.all
      
     apps.each do |app|
       app.send_notifications
@@ -27,24 +27,24 @@ class APN::App < APN::Base
   
   def self.send_notifications_for_cert(the_cert, app_id)
     begin
-      APN::Connection.open_for_delivery({:cert => the_cert}) do |conn, sock|
+      APNS::Connection.open_for_delivery({:cert => the_cert}) do |conn, sock|
         
-        unset = APN::Notification.joins(:device).where(:sent_at => nil, :apn_devices => { :app_id => app_id }).order(:device_id, :created_at).readonly(false)
+        action_localization_key = APNS::Notification.joins(:device).where(:sent_at => nil, :apns_devices => { :app_id => app_id }).order(:device_id, :created_at).readonly(false)
         
-        unset.each do |noty|
-          Rails.logger.debug "Sending notification ##{noty.id}"
+        action_localization_key.each do |notification|
+          Rails.logger.debug "Sending notification ##{notification.id}"
           begin
-            conn.write(noty.message_for_sending)
+            conn.write(notification.message_for_sending)
           rescue => e
-            Rails.logger.error "Cannot send notification ##{noty.id}: " + e.message
+            Rails.logger.error "Cannot send notification ##{notification.id}: " + e.message
             if e.message == "Broken pipe"
               sleep 1
               retry
             end
           end
           
-          noty.sent_at = Time.now
-          noty.save
+          notification.sent_at = Time.now
+          notification.save
         end
         
       end
@@ -54,26 +54,26 @@ class APN::App < APN::Base
   end
            
   
-  # Retrieves a list of APN::Device instances from Apple using
+  # Retrieves a list of APNS::Device instances from Apple using
   # the <tt>devices</tt> method. It then checks to see if the
-  # <tt>last_registered_at</tt> date of each APN::Device is
+  # <tt>last_registered_at</tt> date of each APNS::Device is
   # before the date that Apple says the device is no longer
   # accepting notifications then the device is deleted. Otherwise
   # it is assumed that the application has been re-installed
   # and is available for notifications.
   # 
   # This can be run from the following Rake task:
-  #   $ rake apn:feedback:process
+  #   $ rake apns:feedback:process
   def process_devices
     if self.cert.nil?
-      raise APN::Errors::MissingCertificateError.new
+      raise APNS::Errors::MissingCertificateError.new
       return
     end
-    APN::App.process_devices_for_cert(self.cert)
+    APNS::App.process_devices_for_cert(self.cert)
   end # process_devices
   
   def self.process_devices
-    apps = APN::App.all
+    apps = APNS::App.all
     
     apps.each do |app|
       app.process_devices
@@ -81,8 +81,7 @@ class APN::App < APN::Base
   end
   
   def self.process_devices_for_cert(the_cert)
-    puts "in APN::App.process_devices_for_cert"
-    APN::Feedback.devices(the_cert).each do |device|
+    APNS::Feedback.devices(the_cert).each do |device|
       if device.last_registered_at < device.feedback_at
         puts "device #{device.id} -> #{device.last_registered_at} < #{device.feedback_at}"
         device.destroy
@@ -93,13 +92,13 @@ class APN::App < APN::Base
   end
   
   def self.log_connection_exception(ex)
-    Rails.logger.error "apn_on_rails - Connection error: " + ex.message
+    Rails.logger.error "apns_on_rails - Connection error: " + ex.message
   end
   
   protected
   
   def log_connection_exception(ex)
-    Rails.logger.error "apn_on_rails - Connection error: " + ex.message
+    Rails.logger.error "apns_on_rails - Connection error: " + ex.message
   end
     
 end

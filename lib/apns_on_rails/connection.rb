@@ -1,4 +1,4 @@
-module APN
+module APNS
   module Connection
     
     class << self
@@ -9,7 +9,7 @@ module APN
           @configuration[:passphrase] = ''
           @configuration[:port] = 2195
                 
-          if APN.configuration[:environment] == :production
+          if APNS.configuration[:environment] == :production
             @configuration[:host] = 'gateway.push.apple.com'
           else
             @configuration[:host] = 'gateway.sandbox.push.apple.com'
@@ -39,7 +39,7 @@ module APN
       # The connections are close automatically.
       # 
       #  Example:
-      #   APN::Configuration.open_for_delivery do |conn|
+      #   APNS::Configuration.open_for_delivery do |conn|
       #     conn.write('my cool notification')
       #   end
       def open_for_delivery(options = {}, &block)
@@ -81,4 +81,4 @@ module APN
     end
     
   end # Connection
-end # APN
+end # APNS

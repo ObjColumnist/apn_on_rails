@@ -1,3 +1,3 @@
-module APN
+module APNS
   VERSION = "0.0.1"
 end

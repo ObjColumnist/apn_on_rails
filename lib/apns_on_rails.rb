@@ -2,17 +2,17 @@ require 'socket'
 require 'openssl'
 require 'rails'
 
-require 'apn_on_rails/railtie.rb' if defined? Rails
-require 'apn_on_rails/version.rb'
-require 'apn_on_rails/models/base.rb'
-require 'apn_on_rails/models/app.rb'
-require 'apn_on_rails/models/device.rb'
-require 'apn_on_rails/models/notification.rb'
-require 'apn_on_rails/connection.rb'
-require 'apn_on_rails/feedback.rb'
+require 'apns_on_rails/railtie.rb' if defined? Rails
+require 'apns_on_rails/version.rb'
+require 'apns_on_rails/models/base.rb'
+require 'apns_on_rails/models/app.rb'
+require 'apns_on_rails/models/device.rb'
+require 'apns_on_rails/models/notification.rb'
+require 'apns_on_rails/connection.rb'
+require 'apns_on_rails/feedback.rb'
 
 
-module APN # :nodoc:
+module APNS # :nodoc:
 
   def self.configuration
     if @configuration.nil?
@@ -47,4 +47,4 @@ module APN # :nodoc:
 
   end # Errors
 
-end # APN
+end # APNS

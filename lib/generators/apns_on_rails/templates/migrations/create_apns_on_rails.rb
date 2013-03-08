@@ -1,44 +1,46 @@
 class CreateApnsOnRails < ActiveRecord::Migration
   def self.up
-    create_table "apn_apps", :force => true do |t|
+    create_table "apns_apps", :force => true do |t|
+      t.string   "bundle_identifier"
       t.text     "cert"
       t.datetime "created_at",        :null => false
       t.datetime "updated_at",        :null => false
     end
         
     
-    create_table "apn_devices", :force => true do |t|
+    create_table "apns_devices", :force => true do |t|
       t.string   "token",              :null => false
+      t.string   "language"
       t.datetime "created_at",         :null => false
       t.datetime "updated_at",         :null => false
       t.integer  "app_id"
       t.datetime "last_registered_at"
     end
 
-    add_index "apn_devices", ["token"], :name => "index_apn_devices_on_token"
+    add_index "apns_devices", ["token"], :name => "index_apns_devices_on_token"
 
-    create_table "apn_notifications", :force => true do |t|
+    create_table "apns_notifications", :force => true do |t|
       t.integer  "device_id",         :null => false
       t.string   "sound"
       t.string   "body"
       t.integer  "badge"
       t.string   "launch_image"
-      t.string   "action_localized_key"
-      t.string   "localized_key"
-      t.text     "localized_key_arguments"
+      t.string   "action_localization_key"
+      t.string   "body_localization_key"
+      t.text     "body_localization_key_arguments"
       t.text     "custom_payloads"
       t.datetime "sent_at"
       t.datetime "created_at",        :null => false
       t.datetime "updated_at",        :null => false
     end
 
-    add_index "apn_notifications", ["device_id"], :name => "index_apn_notifications_on_device_id"
+    add_index "apns_notifications", ["device_id"], :name => "index_apns_notifications_on_device_id"
 
   end
 
   def self.down
-    drop_table "apn_apps"
-    drop_table "apn_devices"
-    drop_table "apn_notifications"
+    drop_table "apns_apps"
+    drop_table "apns_devices"
+    drop_table "apns_notifications"
   end
 end
