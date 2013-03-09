@@ -43,47 +43,48 @@ You will then need to run these migrations your database:
 
 The following has now been added to your database:
 
-	create_table "apns_apps", :force => true do |t|
-	  t.string   "bundle_identifier"
-	  t.text     "certificate"
-	  t.text     "environment"
-	  t.datetime "created_at",        :null => false
-	  t.datetime "updated_at",        :null => false
-	end
+```ruby
+create_table "apns_apps", :force => true do |t|
+  t.string   "bundle_identifier"
+  t.text     "certificate"
+  t.text     "environment"
+  t.datetime "created_at",        :null => false
+  t.datetime "updated_at",        :null => false
+end
 
-	add_index "apns_apps", ["bundle_identifier"], :name => "index_apns_apps_on_bundle_identifier"
-    
+add_index "apns_apps", ["bundle_identifier"], :name => "index_apns_apps_on_bundle_identifier"
+   
 
-	create_table "apns_devices", :force => true do |t|
-	  t.integer  "app_id"
-	  t.string   "token"
-	  t.string   "language"
-	  t.string   "locale"
-	  t.datetime "last_registered_at"
-	  t.datetime "created_at",         :null => false
-	  t.datetime "updated_at",         :null => false
-	end
+create_table "apns_devices", :force => true do |t|
+  t.integer  "app_id"
+  t.string   "token"
+  t.string   "language"
+  t.string   "locale"
+  t.datetime "last_registered_at"
+  t.datetime "created_at",         :null => false
+  t.datetime "updated_at",         :null => false
+end
 
-	add_index "apns_devices", ["token"], :name => "index_apns_devices_on_token"
+add_index "apns_devices", ["token"], :name => "index_apns_devices_on_token"
 
-	create_table "apns_notifications", :force => true do |t|
-	  t.integer  "device_id"
-	  t.string   "sound"
-	  t.string   "body"
-	  t.integer  "badge"
-	  t.string   "launch_image"
-	  t.string   "action_localized_key"
-	  t.string   "body_localized_key"
-	  t.text     "body_localized_arguments"
-	  t.text     "custom_payloads"
-	  t.datetime "send_at"
-	  t.datetime "sent_at"
-	  t.datetime "created_at",        :null => false
-	  t.datetime "updated_at",        :null => false
-	end
+create_table "apns_notifications", :force => true do |t|
+  t.integer  "device_id"
+  t.string   "sound"
+  t.string   "body"
+  t.integer  "badge"
+  t.string   "launch_image"
+  t.string   "action_localized_key"
+  t.string   "body_localized_key"
+  t.text     "body_localized_arguments"
+  t.text     "custom_payloads"
+  t.datetime "send_at"
+  t.datetime "sent_at"
+  t.datetime "created_at",        :null => false
+  t.datetime "updated_at",        :null => false
+end
 
-	add_index "apns_notifications", ["device_id"], :name => "index_apns_notifications_on_device_id"
-
+add_index "apns_notifications", ["device_id"], :name => "index_apns_notifications_on_device_id"
+```
 #Configuration
 
 ##Environment
@@ -91,47 +92,49 @@ The following has now been added to your database:
 APNS on Rails uses your `RAILS_ENV` or `RACK_ENV` to decide whether to connect to Apple's Production or Sandbox server. If `Rails.env.production?` is `true` APNS on Rails connects to Apple's Production server else it connects to their sandbox environment.
 
 You can over ride this (for example in environment.rb) by setting the APNS Environment to `:production` or `:sandbox`
-
-	APNS.configuration.merge!({
-		:environment => :production
-	})
+```ruby
+APNS.configuration.merge!({
+	:environment => :production
+})
+```
 
 You can also override the connection settings, but these are automatically configured for Production and Sandbox environments
+```ruby
+APNS::Connection.configuration.merge!({
+	:passphrase => :'',
+	:port => 2195,
+	:passphrase => 'gateway.push.apple.com'
+})
 
-	APNS::Connection.configuration.merge!({
-		:passphrase => :'',
-		:port => 2195,
-		:passphrase => 'gateway.push.apple.com'
-	})
-
-	APNS::Connection.feedback_configuration.merge!({
-		:passphrase => :'',
-		:port => 2196,
-		:passphrase => 'feedback.gateway.push.apple.com'
-	})
-
+APNS::Connection.feedback_configuration.merge!({
+	:passphrase => :'',
+	:port => 2196,
+	:passphrase => 'feedback.gateway.push.apple.com'
+})
+```
 
 ##Example:
-
-	$ rails console
-	>>
-	>> app = APNS::App.new
-	>> app.certificate = File.read("/path/to/development.pem")
-	>> app.bundle_identifier => "com.example.app"
-	>> app.save
-	>>
-	>> device = APNS::Device.new
-	>> device.token = "XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX"
-	>> device.app = app
-	>> device.save
-	>>
-	>> notification = APNS::Notification.new
-	>> notification.device = device
-	>> notification.badge = 5
-	>> notification.sound = 'sound.wav'
-	>> notification.body = 'foobar'
-	>> notification.custom_payloads = {:link => "http://www.example.com"}
-	>> notification.save
+```ruby
+$ rails console
+>>
+>> app = APNS::App.new
+>> app.certificate = File.read("/path/to/development.pem")
+>> app.bundle_identifier => "com.example.app"
+>> app.save
+>>
+>> device = APNS::Device.new
+>> device.token = "XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX"
+>> device.app = app
+>> device.save
+>>
+>> notification = APNS::Notification.new
+>> notification.device = device
+>> notification.badge = 5
+>> notification.sound = 'sound.wav'
+>> notification.body = 'foobar'
+>> notification.custom_payloads = {:link => "http://www.example.com"}
+>> notification.save
+```
 
 You can use the following Rake task to deliver your individual notifications:
 
