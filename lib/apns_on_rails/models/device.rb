@@ -14,9 +14,11 @@ class APNS::Device < APNS::Base
   has_many :notifications, :class_name => 'APNS::Notification', :dependent => :destroy
   has_many :unsent_notifications, :class_name => 'APNS::Notification', :conditions => 'sent_at is null'
   
+  validates_presence_of :token
   validates_uniqueness_of :token, :scope => :app_id
   validates_format_of :token, :with => /^[a-f0-9]{8}\s[a-f0-9]{8}\s[a-f0-9]{8}\s[a-f0-9]{8}\s[a-f0-9]{8}\s[a-f0-9]{8}\s[a-f0-9]{8}\s[a-f0-9]{8}$/
   
+  after_initialize :set_send_at
   before_create :set_last_registered_at
   
   # The <tt>feedback_at</tt> accessor is set when the 
@@ -40,6 +42,10 @@ class APNS::Device < APNS::Base
   # Returns the hexadecimal representation of the device's token.
   def to_hexa
     [self.token.delete(' ')].pack('H*')
+  end
+  
+  def set_send_at
+    self.set_send_at = Time.now if self.last_registered_at.nil?
   end
   
   def set_last_registered_at

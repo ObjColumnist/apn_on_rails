@@ -23,6 +23,8 @@ class APNS::Notification < APNS::Base
   belongs_to :device, :class_name => 'APNS::Device'
   has_one    :app,    :class_name => 'APNS::App', :through => :device
   
+  validates_presence_of :device
+  
   # Stores the text body message you want to send to the device.
   # 
   # If the message is over 150 characters long it will get truncated

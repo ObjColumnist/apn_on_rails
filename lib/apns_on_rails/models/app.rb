@@ -4,14 +4,18 @@ class APNS::App < APNS::Base
   has_many :notifications, :through => :devices, :dependent => :destroy
   has_many :unsent_notifications, :through => :devices
   
-  validates_presence_of :cert
+  validates_presence_of :bundle_identifier
+  validates_presence_of :certificate
+  validates_presence_of :environment
 	validates_inclusion_of :environment, :in => [:production,:sandbox]
+	
+	after_initalize :set_environment
   
   # Opens a connection to the Apple APNS server and attempts to batch deliver
   # an Array of group notifications.
 
   def send_notifications
-    if self.cert.nil?
+    if self.certificate.nil?
       raise APNS::Errors::MissingCertificateError.new
       return
     end
@@ -22,9 +26,9 @@ class APNS::App < APNS::Base
      end
     
     begin
-      APNS::Connection.open_for_delivery({:cert => self.cert}) do |conn, sock|
+      APNS::Connection.open_for_delivery({:certificate => self.certificate}) do |conn, sock|
         
-        unsent = APNS::Notification.joins(:device).where(:sent_at => nil, :apns_devices => { :app_id => app_id }).order(:device_id, :created_at).readonly(false)
+        unsent = APNS::Notification.joins(:device).where(:sent_at => nil, :apns_devices => { :app_id => app_id }).where("send_at <= ?", Time.now).order(:device_id, :created_at).readonly(false)
         
         unsent.each do |notification|
           Rails.logger.debug "Sending notification ##{notification.id}"
@@ -50,7 +54,7 @@ class APNS::App < APNS::Base
   end
   
   def self.send_notifications
-    apps = APNS::App.all
+    apps = APNS::App.where(:environment => APNS.configuration[:environment])
      
     apps.each do |app|
       app.send_notifications
@@ -68,11 +72,11 @@ class APNS::App < APNS::Base
   # This can be run from the following Rake task:
   #   $ rake apns:feedback:process
   def process_devices
-    if self.cert.nil?
+    if self.certificate.nil?
       raise APNS::Errors::MissingCertificateError.new
       return
     end
-    APNS::App.process_devices_for_cert(self.cert)
+    APNS::App.process_devices_for_certificate(self.certificate)
   end # process_devices
   
   def self.process_devices
@@ -83,8 +87,8 @@ class APNS::App < APNS::Base
     end
   end
   
-  def self.process_devices_for_cert(the_cert)
-    APNS::Feedback.devices(the_cert).each do |device|
+  def self.process_devices_for_certificate(the_certificate)
+    APNS::Feedback.devices(the_certificate).each do |device|
       if device.last_registered_at < device.feedback_at
         puts "device #{device.id} -> #{device.last_registered_at} < #{device.feedback_at}"
         device.destroy
@@ -103,5 +107,9 @@ class APNS::App < APNS::Base
   def log_connection_exception(ex)
     Rails.logger.error "apns_on_rails - Connection error: " + ex.message
   end
+  
+  def set_environment
+	  self.environment = APNS.configuration[:environment] if self.environment.nil?
+	end
     
 end

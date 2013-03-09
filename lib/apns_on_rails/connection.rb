@@ -43,7 +43,7 @@ module APNS
       #     conn.write('my cool notification')
       #   end
       def open_for_delivery(options = {}, &block)
-        options = {:cert => self.configuration[:cert],
+        options = {:certificate => self.configuration[:certificate],
                    :passphrase => self.configuration[:passphrase],
                    :host => self.configuration[:host],
                    :port => self.configuration[:port]}.merge(options)
@@ -53,7 +53,7 @@ module APNS
       # Yields up an SSL socket to receive feedback from.
       # The connections are close automatically.
       def open_for_feedback(options = {}, &block)
-        options = {:cert => self.feedback_configuration[:cert],
+        options = {:certificate => self.feedback_configuration[:certificate],
                    :passphrase => self.feedback_configuration[:passphrase],
                    :host => self.feedback_configuration[:host],
                    :port => self.feedback_configuration[:port]}.merge(options)
@@ -62,10 +62,10 @@ module APNS
       
       private
       def open(options = {}, &block) # :nodoc:
-        cert = options[:cert]
+        certificate = options[:certificate]
         ctx = OpenSSL::SSL::SSLContext.new
-        ctx.key = OpenSSL::PKey::RSA.new(cert, options[:passphrase])
-        ctx.cert = OpenSSL::X509::Certificate.new(cert)
+        ctx.key = OpenSSL::PKey::RSA.new(certificate, options[:passphrase])
+        ctx.cert = OpenSSL::X509::Certificate.new(certificate)
   
         sock = TCPSocket.new(options[:host], options[:port])
         ssl = OpenSSL::SSL::SSLSocket.new(sock, ctx)

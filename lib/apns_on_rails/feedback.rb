@@ -10,10 +10,10 @@ module APNS
       # has received feedback from Apple. Each APNS::Device will
       # have it's <tt>feedback_at</tt> accessor marked with the time
       # that Apple believes the device de-registered itself.
-      def devices(cert, &block)
+      def devices(certificate, &block)
         devices = []
-        return if cert.nil? 
-        APNS::Connection.open_for_feedback({:cert => cert}) do |conn, sock|          
+        return if certificate.nil? 
+        APNS::Connection.open_for_feedback({:certificate => certificate}) do |conn, sock|          
           
           while line = conn.read(38)   # Read 38 bytes from the SSL socket
             
