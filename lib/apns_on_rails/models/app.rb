@@ -9,10 +9,18 @@ class APNS::App < APNS::Base
   validates_presence_of :environment
 	validates_inclusion_of :environment, :in => [:production,:sandbox]
 	
-	after_initalize :set_environment
+	after_initialize :set_environment
   
   # Opens a connection to the Apple APNS server and attempts to batch deliver
   # an Array of group notifications.
+  
+  def self.send_notifications
+    apps = APNS::App.where(:environment => APNS.configuration[:environment])
+     
+    apps.each do |app|
+      app.send_notifications
+    end
+  end
 
   def send_notifications
     if self.certificate.nil?
@@ -20,7 +28,7 @@ class APNS::App < APNS::Base
       return
     end
     
-    if self.environment != APNS.configuration[:environment]
+    if self.environment.to_s != APNS.configuration[:environment].to_s
        raise APNS::Errors::IncorrectEnvironmentError.new
        return
      end
@@ -28,8 +36,7 @@ class APNS::App < APNS::Base
     begin
       APNS::Connection.open_for_delivery({:certificate => self.certificate}) do |conn, sock|
         
-        unsent = APNS::Notification.joins(:device).where(:sent_at => nil, :apns_devices => { :app_id => app_id }).where("send_at <= ?", Time.now).order(:device_id, :created_at).readonly(false)
-        
+        unsent = APNS::Notification.joins(:device).where(:sent_at => nil, :apns_devices => { :app_id => id }).where("send_at <= ?", Time.now).order(:device_id, :created_at).readonly(false)
         unsent.each do |notification|
           Rails.logger.debug "Sending notification ##{notification.id}"
           begin
@@ -51,15 +58,7 @@ class APNS::App < APNS::Base
       log_connection_exception(e)
     end
     
-  end
-  
-  def self.send_notifications
-    apps = APNS::App.where(:environment => APNS.configuration[:environment])
-     
-    apps.each do |app|
-      app.send_notifications
-    end
-  end           
+  end        
   
   # Retrieves a list of APNS::Device instances from Apple using
   # the <tt>devices</tt> method. It then checks to see if the

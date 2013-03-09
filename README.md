@@ -2,7 +2,7 @@
 
 # APNS on Rails
 
-APNS on Rails is a lightweight Ruby on Rails gem that adds support for the Apple Push Notification Service to your Rails application.  
+APNS on Rails is a lightweight gem that adds support for the Apple Push Notification Service to your Rails application.  
 
 It supports:
  
@@ -44,39 +44,45 @@ You will then need to run these migrations your database:
 The following has now been added to your database:
 
 	create_table "apns_apps", :force => true do |t|
-	   t.string   "bundle_identifier"
-	   t.text     "cert"
-	   t.datetime "created_at", :null => false
-	   t.datetime "updated_at", :null => false
-	 end
+	  t.string   "bundle_identifier"
+	  t.text     "certificate"
+	  t.text     "environment"
+	  t.datetime "created_at",        :null => false
+	  t.datetime "updated_at",        :null => false
+	end
 
-	 create_table "apns_devices", :force => true do |t|
-	   t.string   "token",              :null => false
-	   t.string   "language"
-	   t.datetime "created_at",         :null => false
-	   t.datetime "updated_at",         :null => false
-	   t.integer  "app_id"
-	   t.datetime "last_registered_at"
-	 end
+	add_index "apns_apps", ["bundle_identifier"], :name => "index_apns_apps_on_bundle_identifier"
+    
 
-	 add_index "apns_devices", ["token"], :name => "index_apns_devices_on_token"
+	create_table "apns_devices", :force => true do |t|
+	  t.integer  "app_id"
+	  t.string   "token"
+	  t.string   "language"
+	  t.string   "locale"
+	  t.datetime "last_registered_at"
+	  t.datetime "created_at",         :null => false
+	  t.datetime "updated_at",         :null => false
+	end
 
-	 create_table "apns_notifications", :force => true do |t|
-	   t.integer  "device_id",               :null => false
-	   t.string   "sound"
-	   t.string   "body"
-	   t.integer  "badge"
-	   t.string   "launch_image"
-	   t.string   "action_localized_key"
-	   t.string   "body_localized_key"
-	   t.text     "body_localized_arguments"
-	   t.text     "custom_payloads"
-	   t.datetime "sent_at"
-	   t.datetime "created_at",              :null => false
-	   t.datetime "updated_at",              :null => false
-	 end
+	add_index "apns_devices", ["token"], :name => "index_apns_devices_on_token"
 
-	 add_index "apns_notifications", ["device_id"], :name => "index_apns_notifications_on_device_id"
+	create_table "apns_notifications", :force => true do |t|
+	  t.integer  "device_id"
+	  t.string   "sound"
+	  t.string   "body"
+	  t.integer  "badge"
+	  t.string   "launch_image"
+	  t.string   "action_localized_key"
+	  t.string   "body_localized_key"
+	  t.text     "body_localized_arguments"
+	  t.text     "custom_payloads"
+	  t.datetime "send_at"
+	  t.datetime "sent_at"
+	  t.datetime "created_at",        :null => false
+	  t.datetime "updated_at",        :null => false
+	end
+
+	add_index "apns_notifications", ["device_id"], :name => "index_apns_notifications_on_device_id"
 
 #Configuration
 
@@ -108,8 +114,17 @@ You can also override the connection settings, but these are automatically confi
 ##Example:
 
 	$ rails console
-	>> app = APNS::App.create(:bundle_identifier => "com.example.app", :certificate => "PASTE YOUR DEV CERT HERE")
-	>> device = APNS::Device.create(:token => "XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX",:app_id => app.id)
+	>>
+	>> app = APNS::App.new
+	>> app.certificate = File.read("/path/to/development.pem")
+	>> app.bundle_identifier => "com.example.app"
+	>> app.save
+	>>
+	>> device = APNS::Device.new
+	>> device.token = "XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX"
+	>> device.app = app
+	>> device.save
+	>>
 	>> notification = APNS::Notification.new
 	>> notification.device = device
 	>> notification.badge = 5
@@ -117,10 +132,6 @@ You can also override the connection settings, but these are automatically confi
 	>> notification.body = 'foobar'
 	>> notification.custom_payloads = {:link => "http://www.example.com"}
 	>> notification.save
-  
-To prevent errors when copy and pasting your dev certs you can do it with Ruby
-
-	>> certificate =  Rails.root.join('config','certs','apns_development.pem').read 
 
 You can use the following Rake task to deliver your individual notifications:
 

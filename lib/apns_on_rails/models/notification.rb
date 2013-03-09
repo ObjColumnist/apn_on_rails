@@ -25,6 +25,8 @@ class APNS::Notification < APNS::Base
   
   validates_presence_of :device
   
+  after_initialize :set_send_at
+  
   # Stores the text body message you want to send to the device.
   # 
   # If the message is over 150 characters long it will get truncated
@@ -88,6 +90,10 @@ class APNS::Notification < APNS::Base
     json = self.to_apple_json
     message = "\0\0 #{self.device.to_hexa}\0#{json.length.chr.force_encoding 'ascii-8bit'}#{json}"
     message
+  end
+  
+  def set_send_at
+    self.send_at = Time.now if self.send_at.nil?
   end
   
 end # APNS::Notification

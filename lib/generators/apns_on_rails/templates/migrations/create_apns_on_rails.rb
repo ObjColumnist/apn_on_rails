@@ -8,7 +8,7 @@ class CreateApnsOnRails < ActiveRecord::Migration
       t.datetime "updated_at",        :null => false
     end
     
-    add_index "apn_apps", ["bundle_identifier"], :name => "index_apns_apps_on_bundle_identifier"
+    add_index "apns_apps", ["bundle_identifier"], :name => "index_apns_apps_on_bundle_identifier"
         
     
     create_table "apns_devices", :force => true do |t|
