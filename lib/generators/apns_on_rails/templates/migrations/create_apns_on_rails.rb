@@ -2,15 +2,19 @@ class CreateApnsOnRails < ActiveRecord::Migration
   def self.up
     create_table "apns_apps", :force => true do |t|
       t.string   "bundle_identifier"
-      t.text     "cert"
+      t.text     "cert",              :null => false
+      t.text     "environment",       :null => false
       t.datetime "created_at",        :null => false
       t.datetime "updated_at",        :null => false
     end
+    
+    add_index "apn_apps", ["bundle_identifier"], :name => "index_apns_apps_on_bundle_identifier"
         
     
     create_table "apns_devices", :force => true do |t|
       t.string   "token",              :null => false
       t.string   "language"
+      t.string   "locale"
       t.datetime "created_at",         :null => false
       t.datetime "updated_at",         :null => false
       t.integer  "app_id"
@@ -25,10 +29,11 @@ class CreateApnsOnRails < ActiveRecord::Migration
       t.string   "body"
       t.integer  "badge"
       t.string   "launch_image"
-      t.string   "action_localization_key"
-      t.string   "body_localization_key"
-      t.text     "body_localization_key_arguments"
+      t.string   "action_localized_key"
+      t.string   "body_localized_key"
+      t.text     "body_localized_arguments"
       t.text     "custom_payloads"
+      t.datetime "send_at"
       t.datetime "sent_at"
       t.datetime "created_at",        :null => false
       t.datetime "updated_at",        :null => false

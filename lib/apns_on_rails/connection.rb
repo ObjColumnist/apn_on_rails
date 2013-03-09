@@ -25,7 +25,7 @@ module APNS
           @feedback_configuration[:passphrase] = ''
           @feedback_configuration[:port] = 2196
   
-          if Rails.env == :production
+          if APNS.configuration[:environment] == :production
             @feedback_configuration[:host] = 'feedback.push.apple.com'
           else
             @feedback_configuration[:host] = 'feedback.sandbox.push.apple.com'

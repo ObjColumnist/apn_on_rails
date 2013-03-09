@@ -15,8 +15,7 @@ It supports:
 
 ### Converting Your Certificate
 
-Once you have the certificate from Apple for your application, export your key
-and the apple certificate as p12 files. Here is a quick walkthrough on how to do this:
+Once you have the certificate from Apple for your application, export your key and the apple certificate as p12 files. Here is a quick walkthrough on how to do this:
 
 1. Click the disclosure arrow next to your certificate in Keychain Access and select the certificate and the key. 
 2. Right click and choose `Export 2 items...`. 
@@ -34,11 +33,11 @@ The contents of the certificate files will be stored in the app model for the ap
 
 ### Setup and Configuration
 
-To create the tables you need for APNS on Rails, run the following task:
+To create the tables need for APNS on Rails, run the following task to generate the database migration files that apns_on_rails needs to work:
 
 	$ rails generate apns_on_rails:migrations
 	
-This will generate the database migration files which apns_on_rails needs to work, you will then need to run the following task to migrate your database:
+You will then need to run these migrations your database:
 
 	$ rake db:migrate
 
@@ -68,9 +67,9 @@ The following has now been added to your database:
 	   t.string   "body"
 	   t.integer  "badge"
 	   t.string   "launch_image"
-	   t.string   "action_localization_key"
-	   t.string   "body_localization_key"
-	   t.text     "body_localization_key_arguments"
+	   t.string   "action_localized_key"
+	   t.string   "body_localized_key"
+	   t.text     "body_localized_arguments"
 	   t.text     "custom_payloads"
 	   t.datetime "sent_at"
 	   t.datetime "created_at",              :null => false
@@ -79,10 +78,37 @@ The following has now been added to your database:
 
 	 add_index "apns_notifications", ["device_id"], :name => "index_apns_notifications_on_device_id"
 
+#Configuration
+
+##Environment
+
+APNS on Rails uses your `RAILS_ENV` or `RACK_ENV` to decide whether to connect to Apple's Production or Sandbox server. If `Rails.env.production?` is `true` APNS on Rails connects to Apple's Production server else it connects to their sandbox environment.
+
+You can over ride this (for example in environment.rb) by setting the APNS Environment to `:production` or `:sandbox`
+
+	APNS.configuration.merge!({
+		:environment => :production
+	})
+
+You can also override the connection settings, but these are automatically configured for Production and Sandbox environments
+
+	APNS::Connection.configuration.merge!({
+		:passphrase => :'',
+		:port => 2195,
+		:passphrase => 'gateway.push.apple.com'
+	})
+
+	APNS::Connection.feedback_configuration.merge!({
+		:passphrase => :'',
+		:port => 2196,
+		:passphrase => 'feedback.gateway.push.apple.com'
+	})
+
+
 ##Example:
 
 	$ rails console
-	>> app = APNS::App.create(:apns_dev_cert => "PASTE YOUR DEV CERT HERE", :apns_prod_cert => "PASTE YOUR PROD CERT HERE")
+	>> app = APNS::App.create(:bundle_identifier => "com.example.app", :certificate => "PASTE YOUR DEV CERT HERE")
 	>> device = APNS::Device.create(:token => "XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX",:app_id => app.id)
 	>> notification = APNS::Notification.new
 	>> notification.device = device
@@ -94,7 +120,7 @@ The following has now been added to your database:
   
 To prevent errors when copy and pasting your dev certs you can do it with Ruby
 
-	>> app = APNS::App.create(:apns_dev_cert => Rails.root.join('config','certs','apns_development.pem').read,:apns_prod_cert => Rails.root.join('config', 'certs','apns_production.pem').read)  
+	>> certificate =  Rails.root.join('config','certs','apns_development.pem').read 
 
 You can use the following Rake task to deliver your individual notifications:
 

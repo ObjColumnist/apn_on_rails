@@ -5,6 +5,7 @@ class APNS::App < APNS::Base
   has_many :unsent_notifications, :through => :devices
   
   validates_presence_of :cert
+	validates_inclusion_of :environment, :in => [:production,:sandbox]
   
   # Opens a connection to the Apple APNS server and attempts to batch deliver
   # an Array of group notifications.
@@ -14,24 +15,18 @@ class APNS::App < APNS::Base
       raise APNS::Errors::MissingCertificateError.new
       return
     end
-    APNS::App.send_notifications_for_cert(self.cert, self.id)
-  end
-  
-  def self.send_notifications
-    apps = APNS::App.all
-     
-    apps.each do |app|
-      app.send_notifications
-    end
-  end
-  
-  def self.send_notifications_for_cert(the_cert, app_id)
+    
+    if self.environment != APNS.configuration[:environment]
+       raise APNS::Errors::IncorrectEnvironmentError.new
+       return
+     end
+    
     begin
-      APNS::Connection.open_for_delivery({:cert => the_cert}) do |conn, sock|
+      APNS::Connection.open_for_delivery({:cert => self.cert}) do |conn, sock|
         
-        action_localization_key = APNS::Notification.joins(:device).where(:sent_at => nil, :apns_devices => { :app_id => app_id }).order(:device_id, :created_at).readonly(false)
+        unsent = APNS::Notification.joins(:device).where(:sent_at => nil, :apns_devices => { :app_id => app_id }).order(:device_id, :created_at).readonly(false)
         
-        action_localization_key.each do |notification|
+        unsent.each do |notification|
           Rails.logger.debug "Sending notification ##{notification.id}"
           begin
             conn.write(notification.message_for_sending)
@@ -51,8 +46,16 @@ class APNS::App < APNS::Base
     rescue Exception => e
       log_connection_exception(e)
     end
+    
   end
-           
+  
+  def self.send_notifications
+    apps = APNS::App.all
+     
+    apps.each do |app|
+      app.send_notifications
+    end
+  end           
   
   # Retrieves a list of APNS::Device instances from Apple using
   # the <tt>devices</tt> method. It then checks to see if the

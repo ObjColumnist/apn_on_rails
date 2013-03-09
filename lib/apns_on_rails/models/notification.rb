@@ -18,7 +18,7 @@ class APNS::Notification < APNS::Base
   include ::ActionView::Helpers::TextHelper
   extend ::ActionView::Helpers::TextHelper
   serialize :custom_payloads
-  serialize :body_localization_key_arguments
+  serialize :body_localized_arguments
   
   belongs_to :device, :class_name => 'APNS::Device'
   has_one    :app,    :class_name => 'APNS::App', :through => :device
@@ -54,9 +54,9 @@ class APNS::Notification < APNS::Base
     result['aps'] = {}
     result['aps']['alert'] = {}
     result['aps']['alert']['body'] = self.body if self.body
-    result['aps']['alert']['loc-key'] = self.body_localization_key if self.body_localization_key
-    result['aps']['alert']['loc-args'] = self.body_localization_key_arguments if self.body_localization_key_arguments
-    result['aps']['alert']['action-loc-key'] = self.action_localization_key if self.action_localization_key
+    result['aps']['alert']['loc-key'] = self.body_localized_key if self.body_localized_key
+    result['aps']['alert']['loc-args'] = self.body_localized_arguments if self.body_localized_arguments
+    result['aps']['alert']['action-loc-key'] = self.action_localized_key if self.action_localized_key
     result['aps']['alert']['launch-image'] = self.launch_image if self.launch_image
     result['aps']['badge'] = self.badge.to_i if self.badge
     result['aps']['sound'] = self.sound if self.sound

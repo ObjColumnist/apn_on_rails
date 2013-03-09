@@ -21,7 +21,7 @@ module APNS # :nodoc:
       if Rails.env.production?
         @configuration[:environment] = :production
       else
-        @configuration[:environment] = :development
+        @configuration[:environment] = :sandbox
       end
     end
     
@@ -42,6 +42,12 @@ module APNS # :nodoc:
     class MissingCertificateError < StandardError
       def initialize
         super("This app has no certificate")
+      end
+    end
+    
+    class IncorrectEnvironmentError < StandardError
+      def initialize
+        super("This app is configured with the incorrect environment")
       end
     end
 
