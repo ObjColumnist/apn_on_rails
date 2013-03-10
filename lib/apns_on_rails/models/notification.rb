@@ -55,15 +55,30 @@ class APNS::Notification < APNS::Base
   #   apns.apple_hash # => {"aps" => {"badge" => 0, "sound" => "1.aiff"}, "typ" => "1"}
   def apple_hash
     result = {}
-    result['aps'] = {}
-    result['aps']['alert'] = {}
-    result['aps']['alert']['body'] = self.body if self.body
-    result['aps']['alert']['loc-key'] = self.body_localized_key if self.body_localized_key
-    result['aps']['alert']['loc-args'] = self.body_localized_arguments if self.body_localized_arguments
-    result['aps']['alert']['action-loc-key'] = self.action_localized_key if self.action_localized_key
-    result['aps']['alert']['launch-image'] = self.launch_image if self.launch_image
-    result['aps']['badge'] = self.badge.to_i if self.badge
-    result['aps']['sound'] = self.sound if self.sound
+    aps = {}
+    alert = {}
+    
+    alert['body'] = self.body if self.body
+    alert['loc-key'] = self.body_localized_key if self.body_localized_key
+    alert['loc-args'] = self.body_localized_arguments if self.body_localized_arguments
+    
+    # if action_localized_key is empty the notification will supply the default action key
+    if self.action_localized_key.nil? == false
+      if self.action_localized_key.empty?
+        alert['action-loc-key'] = nil
+      else
+        alert['action-loc-key'] = self.action_localized_key
+      end
+    end
+    
+    alert['launch-image'] = self.launch_image if self.launch_image
+    
+    aps['alert'] = alert if alert.empty? == false
+    
+    aps['badge'] = self.badge.to_i if self.badge
+    aps['sound'] = self.sound if self.sound
+    
+    result['aps'] = aps if aps.empty? == false
 
     if self.custom_payloads
       result.merge!(self.custom_payloads)
