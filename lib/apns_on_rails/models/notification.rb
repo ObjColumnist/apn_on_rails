@@ -17,8 +17,8 @@
 class APNS::Notification < APNS::Base
   include ::ActionView::Helpers::TextHelper
   extend ::ActionView::Helpers::TextHelper
-  serialize :custom_payloads
-  serialize :body_localized_arguments
+  serialize :custom_payloads, Hash
+  serialize :body_localized_arguments, Array
   
   belongs_to :device, :class_name => 'APNS::Device'
   has_one    :app,    :class_name => 'APNS::App', :through => :device

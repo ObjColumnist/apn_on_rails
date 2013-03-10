@@ -2,8 +2,9 @@ class CreateApnsOnRails < ActiveRecord::Migration
   def self.up
     create_table "apns_apps", :force => true do |t|
       t.string   "bundle_identifier"
+      t.string   "platform"
+      t.string   "environment"
       t.text     "certificate"
-      t.text     "environment"
       t.datetime "created_at",        :null => false
       t.datetime "updated_at",        :null => false
     end

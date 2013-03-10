@@ -5,10 +5,13 @@ class APNS::App < APNS::Base
   has_many :unsent_notifications, :through => :devices
   
   validates_presence_of :bundle_identifier
-  validates_presence_of :certificate
+  validates_presence_of :platform
+  validates_inclusion_of :platform, :in => [:ios,:osx]
   validates_presence_of :environment
 	validates_inclusion_of :environment, :in => [:production,:sandbox]
+	validates_presence_of :certificate
 	
+	after_initialize :set_platform
 	after_initialize :set_environment
   
   # Opens a connection to the Apple APNS server and attempts to batch deliver
@@ -105,6 +108,10 @@ class APNS::App < APNS::Base
   
   def log_connection_exception(ex)
     Rails.logger.error "apns_on_rails - Connection error: " + ex.message
+  end
+  
+  def set_platform
+    self.platform = :ios
   end
   
   def set_environment
