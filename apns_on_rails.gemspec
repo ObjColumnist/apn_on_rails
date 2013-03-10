@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.authors = ["Spencer MacDonald"]
   s.date = %q{2013-03-08}
-  s.description = %q{APNS on Rails is a lightweight Ruby on Rails gem that adds support for the Apple Push Notification Service to your Rails application.}
+  s.description = %q{APNS on Rails is a lightweight gem that adds support for the Apple Push Notification Service to your Rails application.}
   s.email = %q{opensource@squarebracketsoftware.com}
   s.files = `git ls-files`.split("\n")
   s.require_paths = ["lib"]

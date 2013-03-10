@@ -6,9 +6,9 @@ class APNS::App < APNS::Base
   
   validates_presence_of :bundle_identifier
   validates_presence_of :platform
-  validates_inclusion_of :platform, :in => [:ios,:osx]
+  validates_inclusion_of :platform, :in => ['ios','osx']
   validates_presence_of :environment
-	validates_inclusion_of :environment, :in => [:production,:sandbox]
+	validates_inclusion_of :environment, :in => ['production','sandbox']
 	validates_presence_of :certificate
 	
 	after_initialize :set_platform
@@ -31,7 +31,7 @@ class APNS::App < APNS::Base
       return
     end
     
-    if self.environment.to_s != APNS.configuration[:environment].to_s
+    if self.environment != APNS.configuration[:environment]
        raise APNS::Errors::IncorrectEnvironmentError.new
        return
      end
@@ -111,7 +111,7 @@ class APNS::App < APNS::Base
   end
   
   def set_platform
-    self.platform = :ios
+    self.platform = 'ios'
   end
   
   def set_environment

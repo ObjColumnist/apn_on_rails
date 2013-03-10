@@ -9,7 +9,7 @@ module APNS
           @configuration[:passphrase] = ''
           @configuration[:port] = 2195
                 
-          if APNS.configuration[:environment] == :production
+          if APNS.configuration[:environment] == 'production'
             @configuration[:host] = 'gateway.push.apple.com'
           else
             @configuration[:host] = 'gateway.sandbox.push.apple.com'
@@ -25,7 +25,7 @@ module APNS
           @feedback_configuration[:passphrase] = ''
           @feedback_configuration[:port] = 2196
   
-          if APNS.configuration[:environment] == :production
+          if APNS.configuration[:environment] == 'production'
             @feedback_configuration[:host] = 'feedback.push.apple.com'
           else
             @feedback_configuration[:host] = 'feedback.sandbox.push.apple.com'

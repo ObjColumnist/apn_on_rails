@@ -19,9 +19,9 @@ module APNS # :nodoc:
       @configuration = {}
             
       if Rails.env.production?
-        @configuration[:environment] = :production
+        @configuration[:environment] = 'production'
       else
-        @configuration[:environment] = :sandbox
+        @configuration[:environment] = 'sandbox'
       end
     end
     
