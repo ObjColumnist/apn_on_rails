@@ -15,12 +15,12 @@ It supports:
 
 # Installation and Setup
 
-### Converting Your Certificate
+### Converting Your SSL Certificate
 
-Once you have the certificate from Apple for your app in the Keychain Access app, export your key and the Apple certificate as a p12 file. Here is a quick walkthrough on how to do this:
+Once you have downloaded the SSL Certificate and added it to the Keychain Access app, you will need to export your Private Key and the SSL Certificate as a p12 file. Here is a quick walkthrough on how to do this:
 
-1. Click the disclosure arrow next to your certificate in Keychain Access to reveal the private key
-2. Select both the certificate and the private key. 
+1. Click the disclosure arrow next to your SSL Certificate in Keychain Access to reveal the Private Key
+2. Select both the SSL Certificate and the Private Key. 
 3. Right click and choose `Export 2 items...`. 
 4. Choose the p12 format from the drop down and name it something like `cert.p12`. 
 
@@ -121,16 +121,16 @@ APNS::Connection.feedback_configuration.merge!({
 })
 ```
 
-##Example
+##Sending a Push Notification
 
-To send our first push notification we will use the rails console, you can start this by typing the following into terminal:
+To send our first push notification we will use the _rails console_, you can start this by typing the following into terminal:
 ```ruby
 $ rails console
 ```
 
 Each notification has a relationship with device, which in turn has a relationship with an app.
 
-The first thing we need to do is create an app. You will need to specify a platform which can be either `ios` or `osx`, as well as an environment.
+The first thing we need to do is to create an app. You will need to specify a `platform` which can be either `ios` or `osx`, the `environment` (this defaults to the current APNS Environment), `bundle_identifier` and the `certificate` which is the contents of the *p12* that we created earlier:
 
 ```ruby
 >> app = APNS::App.new
@@ -141,7 +141,7 @@ The first thing we need to do is create an app. You will need to specify a platf
 >> app.save
 ```
 
-You will then need to create a device using the device token returned by Apple, after you have successfully registered for push notifications
+You will then need to create a device using the device token, which is returned by Apple after you have successfully registered for push notifications:
 
 ```ruby
 >> device = APNS::Device.new
@@ -150,7 +150,7 @@ You will then need to create a device using the device token returned by Apple, 
 >> device.save
 ```
 
-You can then create a notification and associate it with a device
+You can then create a notification and associate it with a device, all of the other attributes are optional:
 
 ```ruby
 >> notification = APNS::Notification.new
@@ -173,6 +173,11 @@ You can configure the notification like so:
 ```ruby
 notification.body_localized_key = 'FRIEND_HIGHSCORE_APNS_FORMAT'
 notification.body_localized_arguments = ['Spencer',100]
+```
+
+You can set a custom launch image (instead of _Default.png_) by using `launch_image`:
+```ruby
+notification.launch_image = 'NotificationLaunchImage.png'
 ```
 
 You can supply custom payloads using `custom_playloads`, this takes a Hash which is merged with the Push Notification Hash before sending:
