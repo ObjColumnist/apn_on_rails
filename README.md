@@ -28,21 +28,19 @@ Now covert the p12 file to a pem file:
 
 	$ openssl pkcs12 -in cert.p12 -out certificate.pem -nodes -clcerts
 
-The contents of the pem certificate file will be stored in the app model for the app you want to send notifications to.
-
 ### Installing the Gem
 
-Simply add the following line to your gem file
+Simply add the following line to your gem file:
 
 	gem 'apns_on_rails', :git => 'https://github.com/ObjColumnist/apn_on_rails.git'
 	
-Then run bundle to install the gem
+Then run bundle to install the gem:
 
 	$ bundle
 
-### Setup and Configuration
+### Migrating the Database
 
-To create the tables needed for APNS on Rails, first run the following task to generate the database migration files:
+To create the tables needed for APNS on Rails to function, first run the following task to generate the database migration files:
 
 	$ rails generate apns_on_rails:migrations
 	
@@ -95,7 +93,7 @@ end
 
 add_index "apns_notifications", ["device_id"], :name => "index_apns_notifications_on_device_id"
 ```
-###Environment
+###Setting the Environment
 
 APNS on Rails uses `Rails.env` to decide whether to connect to Apple's Production or Sandbox servers. If `Rails.env.production?` is `true` APNS on Rails connects to Apple's Production servers, else it connects to their Sandbox servers.
 
@@ -130,7 +128,7 @@ $ rails console
 
 Each notification has a relationship with device, which in turn has a relationship with an app.
 
-The first thing we need to do is to create an app. You will need to specify a `platform` which can be either `ios` or `osx`, the `environment` (this defaults to the current APNS Environment), `bundle_identifier` and the `certificate` which is the contents of the *p12* that we created earlier:
+The first thing we need to do is to create an app. You will need to specify a `platform` which can be either `ios` or `osx`, the `environment` (this defaults to the current APNS Environment), the app's `bundle_identifier` and the `certificate` which is the contents of the *p12* that we created earlier:
 
 ```ruby
 >> app = APNS::App.new
@@ -141,7 +139,7 @@ The first thing we need to do is to create an app. You will need to specify a `p
 >> app.save
 ```
 
-You will then need to create a device using the device token, which is returned by Apple after you have successfully registered for push notifications:
+You will then need to create a device using the device token that was returned by Apple after you have successfully registered for push notifications:
 
 ```ruby
 >> device = APNS::Device.new
@@ -198,7 +196,7 @@ You can use the following Rake task to deliver your individual notifications:
 $ rake apns:notifications:deliver
 ```
 
-The Rake task will find any unsent notifications in the database who's `send_at` date is in the past. If there aren't any notifications it will simply do nothing. If there are notifications waiting to be delivered it will open a single connection to Apple and push all the notifications through that one connection. Apple does not like people opening/closing connections constantly, so it's pretty important that you are careful about batching up your notifications so Apple doesn't shut you down.
+The Rake task will find any unsent notifications in the database who's `send_at` date is in the past. If there are no notifications waiting to be delivered it will simply do nothing. If there are notifications waiting to be delivered it will open a single connection to Apple and push all the notifications through that one connection.
 
 
 # Acknowledgements
