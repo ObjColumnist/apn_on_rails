@@ -78,6 +78,8 @@ class APNS::Notification < APNS::Base
     aps['badge'] = self.badge.to_i if self.badge
     aps['sound'] = self.sound if self.sound
     
+    aps['content-available'] = content_available.to_i if self.content_available
+    
     result['aps'] = aps if aps.empty? == false
 
     if self.custom_payloads

@@ -33,6 +33,7 @@ class CreateApnsOnRails < ActiveRecord::Migration
       t.string   "action_localized_key"
       t.string   "body_localized_key"
       t.text     "body_localized_arguments"
+      t.integer  "content_available"
       t.text     "custom_payloads"
       t.datetime "send_at"
       t.datetime "sent_at"

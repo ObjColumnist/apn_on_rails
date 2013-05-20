@@ -8,6 +8,7 @@ It supports:
  
 * Multiple apps managed from a single Rails application
 * Localized alerts, action buttons, badges, sounds, launch images and custom payloads in notifications
+* Newsstand Push Notifications
 * Scheduling of Notifications
 * Supports both iOS and OS X apps
 * Batch sending of notifications
@@ -84,6 +85,7 @@ create_table "apns_notifications", :force => true do |t|
   t.string   "action_localized_key"
   t.string   "body_localized_key"
   t.text     "body_localized_arguments"
+  t.integer  "content_available"
   t.text     "custom_payloads"
   t.datetime "send_at"
   t.datetime "sent_at"
@@ -176,6 +178,11 @@ notification.body_localized_arguments = ['Spencer',100]
 You can set a custom launch image (instead of _Default.png_) by using `launch_image`:
 ```ruby
 notification.launch_image = 'NotificationLaunchImage.png'
+```
+
+You can send a Newsstand Push Notification by setting `content_available` to `1`:
+```ruby
+notification.content_available = 1
 ```
 
 You can supply custom payloads using `custom_playloads`, this takes a Hash which is merged with the Push Notification Hash before sending:
